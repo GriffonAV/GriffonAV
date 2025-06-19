@@ -15,6 +15,9 @@ jobs:
                   fetch-depth: 0
 
             - name: Complete mirror
+              env:
+                  DESTINATION_REPO: ${{ secrets.DESTINATION_REPO }}
+                  DESTINATION_TOKEN: ${{ secrets.DESTINATION_TOKEN }}
               run: |
-                  git remote add destination https://${DESTINATION_TOKEN}@${DESTINATION_REPO#https://}
-                  git push destination --mirror  # Pousse TOUT
+                  git remote add destination https://${DESTINATION_TOKEN}@${DESTINATION_REPO}
+                  git push destination --mirror
