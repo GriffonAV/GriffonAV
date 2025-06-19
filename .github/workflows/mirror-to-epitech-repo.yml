@@ -1,0 +1,23 @@
+name: Complete Mirror
+
+on:
+    push:
+    schedule:
+        - cron: "0 2 * * *"
+
+jobs:
+    mirror:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout with full history
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Complete mirror
+              env:
+                  DEST_REPO: ${{ secrets.DESTINATION_REPO }}
+                  DEST_TOKEN: ${{ secrets.DESTINATION_TOKEN }}
+              run: |
+                  git remote add destination https://${DEST_TOKEN}@${DEST_REPO#https://}
+                  git push destination --mirror  # Pousse TOUT

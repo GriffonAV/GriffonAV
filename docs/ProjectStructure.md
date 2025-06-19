@@ -1,6 +1,6 @@
 GriffonAV/
 │
-├── core/                            # Core Antivirus Service
+├── core/                            # Core Antivirus Service (Daemon)
 │   ├── src/                         # Rust source files for the core service
 │   │   ├── main.rs                  # Entry point for the core service
 │   │   ├── lib.rs                   # Library code
@@ -74,14 +74,17 @@ GriffonAV/
 └── ...                              # Other project files
 
 
+
 ---------- Simplify for presentations ----------------
 
 GriffonAV/
 │
 ├── Core Service (Rust)
-│   ├── Scanner
-│   ├── Monitor
-│   └── Updater
+│   ├── Core
+│   └── Modules
+│       ├── Scanner
+│       ├── Monitor
+│       └── Updater
 │
 ├── GUI Application
 │   ├── React Frontend
