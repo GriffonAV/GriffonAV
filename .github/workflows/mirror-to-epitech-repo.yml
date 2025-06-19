@@ -1,15 +1,20 @@
-name: Mirror Repository (Using Action)
+name: Mirror Repository with Pixta-dev
 
 on:
-  push:
-  delete:
+    push:
+    delete:
 
 jobs:
-  mirror:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Mirror repository
-        uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url: ${{ secrets.TARGET_REPO_URL }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+    mirror:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout source repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Mirror repository
+              uses: pixta-dev/repository-mirroring-action@v1
+              with:
+                  target_repo_url: ${{ secrets.TARGET_REPO_URL }}
+                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
