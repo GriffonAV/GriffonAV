@@ -1,43 +1,15 @@
-name: Debug Complete
+name: Mirror Repository (Using Action)
 
 on:
-  workflow_dispatch:
+  push:
+  delete:
 
 jobs:
-  debug:
+  mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Mirror repository
+        uses: pixta-dev/repository-mirroring-action@v1
         with:
-          fetch-depth: 0
-
-      - name: Debug complet
-        env:
-          DEST_REPO: ${{ secrets.DESTINATION_REPO }}
-          DEST_TOKEN: ${{ secrets.DESTINATION_TOKEN }}
-        run: |
-          echo "=== DEBUG SECRETS ==="
-          echo "DEST_REPO exists: ${{ secrets.DESTINATION_REPO != '' }}"
-          echo "DEST_TOKEN exists: ${{ secrets.DESTINATION_TOKEN != '' }}"
-          echo "DEST_REPO length: ${#DEST_REPO}"
-          echo "DEST_TOKEN length: ${#DEST_TOKEN}"
-
-          if [ -z "$DEST_REPO" ]; then
-            echo "❌ DEST_REPO est complètement vide"
-          else
-            echo "✅ DEST_REPO contient: '${DEST_REPO}'"
-          fi
-
-          if [ -z "$DEST_TOKEN" ]; then
-            echo "❌ DEST_TOKEN est complètement vide"
-          else
-            echo "✅ DEST_TOKEN commence par: ${DEST_TOKEN:0:10}..."
-          fi
-
-          echo "=== TEST URL CONSTRUCTION ==="
-          FULL_URL="https://${DEST_TOKEN}@${DEST_REPO}"
-          echo "URL construite: ${FULL_URL:0:50}..."
-
-          echo "=== TEST REPO EXISTENCE ==="
-          curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel" || echo "Curl failed"
+          target_repo_url: ${{ secrets.TARGET_REPO_URL }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
