@@ -1,70 +1,63 @@
-default:
-    @just --list
-
-install:
+setup:
+    @echo "🔧 Setting up GriffonAV..."
+    cargo fetch
     cd gui && npm install
-    cargo build --manifest-path services/core/Cargo.toml
-    cargo build --manifest-path services/stan/Cargo.toml
+    just check
 
-dev-gui:
-    cd gui && npm start
-
-dev-tauri:
-    cd gui && npm run tauri dev
-
-dev-core:
-    cargo run --manifest-path services/core/Cargo.toml
-
-dev-stan:
-    cargo run --manifest-path services/stan/Cargo.toml
-
-build-gui:
+build:
+    @echo "🔨 Building all components..."
+    cargo build --workspace
     cd gui && npm run build
 
-build-tauri:
-    cd gui && npm run tauri build
+build-release:
+    @echo "🚀 Building release..."
+    cargo build --workspace --release
+    cd gui && npm run build
 
-build-services:
-    cargo build --release --manifest-path services/core/Cargo.toml
-    cargo build --release --manifest-path services/stan/Cargo.toml
+test:
+    @echo "🧪 Running tests..."
+    cargo test --workspace
+    cd gui && npm test
 
-build: build-gui build-services
+test-coverage:
+    @echo "📊 Running tests with coverage..."
+    cargo tarpaulin --workspace --out html --output-dir target/coverage
 
-test-gui:
-    cd gui && npm test -- --watchAll=false
+check:
+    @echo "✅ Checking code quality..."
+    cargo check --workspace
+    cargo clippy --workspace -- -D warnings
+    cargo fmt --check
 
-test-tauri:
-    cd gui/src-tauri && cargo test
+fmt:
+    @echo "🎨 Formatting code..."
+    cargo fmt --all
+    cd gui && npm run format
 
-test-services:
-    cargo test --manifest-path services/core/Cargo.toml
-    cargo test --manifest-path services/stan/Cargo.toml
+fix:
+    @echo "🔧 Fixing issues..."
+    cargo clippy --workspace --fix --allow-staged
+    cargo fmt --all
+    cd gui && npm run lint --fix
 
-test: test-gui test-services
+run-core:
+    @echo "🔍 Starting core service..."
+    cargo run -p griffon-core
 
-lint-gui:
-    cd gui && npm run lint
+run-gui:
+    @echo "🖥️  Starting GUI..."
+    cd gui && npx tauri dev
 
-fmt-rust:
-    cargo fmt --manifest-path services/core/Cargo.toml
-    cargo fmt --manifest-path services/stan/Cargo.toml
-    cd gui/src-tauri && cargo fmt
+clean:
+    @echo "🧹 Cleaning..."
+    cargo clean
+    cd gui && rm -rf node_modules dist src-tauri/target
 
-clippy:
-    cargo clippy --manifest-path services/core/Cargo.toml -- -D warnings
-    cargo clippy --manifest-path services/stan/Cargo.toml -- -D warnings
-    cd gui/src-tauri && cargo clippy -- -D warnings
+dev: check test
+    @echo "✨ Ready for development!"
 
-clean-gui:
-    cd gui && rm -rf node_modules build
+ci: setup check test build
+    @echo "🎉 CI pipeline completed!"
 
-clean-rust:
-    cargo clean --manifest-path services/core/Cargo.toml
-    cargo clean --manifest-path services/stan/Cargo.toml
-    cd gui/src-tauri && cargo clean
-
-clean: clean-gui clean-rust
-
-setup: install
-    @echo "✅ Project setup complete!"
-    @echo "Run 'just dev-tauri' to start the Tauri app"
+help:
+    @just --list

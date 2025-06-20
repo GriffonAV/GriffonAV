@@ -79,18 +79,18 @@ GriffonAV/
 
 GriffonAV/
 │
-├── Core Service (Rust)
+├── Services
 │   ├── Core
+│
+├── gui
+│   ├── React Frontend files
+│   └── Tauri Backend/
+│
+├── Shared Code
 │   └── Modules
 │       ├── Scanner
 │       ├── Monitor
 │       └── Updater
-│
-├── GUI Application
-│   ├── React Frontend
-│   └── Tauri Backend
-│
-├── Shared Code
 │
 ├── Tests
 │   ├── Core Service Tests
