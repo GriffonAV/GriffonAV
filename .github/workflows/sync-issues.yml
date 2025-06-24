@@ -10,6 +10,5 @@ jobs:
       - name: Sync issue to another repo
         uses: Maximisch/issue-sync-action@v2.0
         with:
-          source-repo: ${{ github.repository }}
-          target-repo: EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel
-          github-token: ${{ secrets.ISSUE_SYNC_TOKEN }}
+          target_repo: EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel
+          target_pat: ${{ secrets.ISSUE_SYNC_TOKEN }}
