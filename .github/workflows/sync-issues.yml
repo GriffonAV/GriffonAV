@@ -1,0 +1,15 @@
+name: Sync Issues
+on:
+  issues:
+    types: [opened, edited, closed]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync issue to another repo
+        uses: maximisch/issue-sync-action@v2
+        with:
+          source-repo: ${{ github.repository }}
+          target-repo: EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel
+          github-token: ${{ secrets.ISSUE_SYNC_TOKEN }}
