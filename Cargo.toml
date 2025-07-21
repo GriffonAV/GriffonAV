@@ -1,8 +1,6 @@
 [workspace]
 members = [
-    "services/core",
-    "services/stan",
-    "gui/src-tauri",
+    "gui/src-tauri", "core", "cli", "daemon",
 ]
 resolver = "2"
 

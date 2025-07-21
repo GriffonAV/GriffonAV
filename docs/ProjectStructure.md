@@ -99,3 +99,27 @@ GriffonAV/
 ├── Documentation
 │
 └── Build & Deployment
+
+
+---------------------------------- PROBABLY MORE SOMETHING LIKE THIS --------------------------------
+
+griffon/
+├── core/                  # Pure Rust: the antivirus logic (like a lib or binary)
+│   ├── src/
+│   ├── Cargo.toml
+│   └── ...
+├── cli/                   # Optional: Command-line wrapper for the core
+│   ├── src/
+│   ├── Cargo.toml
+│   └── ...
+├── daemon/                # Optional: Background scanning service
+│   ├── src/
+│   ├── Cargo.toml
+│   └── ...
+├── gui/                   # Tauri + React GUI
+│   ├── src/
+│   ├── vite.config.ts
+│   ├── tauri.conf.json
+│   └── ...
+├── Cargo.toml             # Workspace root
+├── Cargo.lock

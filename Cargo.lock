@@ -3,10 +3,6 @@
 version = 3
 
 [[package]]
-name = "Stan"
-version = "0.1.0"
-
-[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -98,6 +94,7 @@ checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "griffon_core",
  "log",
  "serde",
  "serde_json",
@@ -453,6 +450,10 @@ dependencies = [
  "serde",
  "windows-link",
 ]
+
+[[package]]
+name = "cli"
+version = "0.1.0"
 
 [[package]]
 name = "combine"
@@ -1242,6 +1243,14 @@ dependencies = [
  "libc",
  "system-deps",
 ]
+
+[[package]]
+name = "griffon_core"
+version = "0.1.0"
+
+[[package]]
+name = "griffon_daemon"
+version = "0.1.0"
 
 [[package]]
 name = "gtk"
@@ -3102,10 +3111,6 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
-
-[[package]]
-name = "server"
-version = "0.1.0"
 
 [[package]]
 name = "servo_arc"
