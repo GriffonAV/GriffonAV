@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
 function App() {
@@ -13,7 +14,14 @@ function App() {
         setScanResult(null);
 
         try {
-            // Replace with the actual path or let user input it
+            const pathToScan = "/home/file.txt";
+
+            // Call Rust backend command via Tauri invoke
+            const result = await invoke<string>("scan_from_gui", {
+                path: pathToScan,
+            });
+
+            setScanResult(result);
         } catch (err) {
             setError(String(err));
         } finally {
@@ -23,6 +31,15 @@ function App() {
 
     return (
         <div className="flex min-h-svh flex-col items-center justify-center p-4">
+            <img
+                src="/assets/logo.png"
+                alt="Griffon Logo"
+                style={{
+                    imageRendering: "pixelated",
+                }}
+                className="w-32 h-auto"
+            />
+
             <Button onClick={handleScan} disabled={loading}>
                 {loading ? "Scanning..." : "Start Scan"}
             </Button>
