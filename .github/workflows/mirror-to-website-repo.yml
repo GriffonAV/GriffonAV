@@ -1,4 +1,4 @@
-name: Mirror Repository to website repository with Pixta-dev
+name: Mirror Specific website/ to Website Repository
 
 on:
     push:
@@ -15,8 +15,26 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Mirror repository
-              uses: pixta-dev/repository-mirroring-action@v1
-              with:
-                  target_repo_url: ${{ secrets.TARGET_WEBSITE_REPO_URL }}
-                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+            - name: Set up SSH
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  chmod 600 ~/.ssh/id_rsa
+
+            - name: Clone target repository
+              run: |
+                  git clone ${{ secrets.TARGET_WEBSITE_REPO_URL }} target-repo
+
+            - name: Copy specific folder
+              run: |
+                  rm -rf target-repo/specific-folder
+                  cp -r website target-repo/
+
+            - name: Commit and push changes
+              run: |
+                  cd target-repo
+                  git config user.name "GitHub Actions"
+                  git config user.email "actions@github.com"
+                  git add .
+                  git commit -m "Mirror specific folder from source repository"
+                  git push
