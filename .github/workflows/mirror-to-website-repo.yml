@@ -1,4 +1,4 @@
-name: Mirror Repository with Pixta-dev
+name: Mirror Repository to website repository with Pixta-dev
 
 on:
     push:
