@@ -5,6 +5,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import Heading from "@theme/Heading";
+import Head from "@docusaurus/Head";
 
 import styles from "./index.module.css";
 
@@ -32,11 +33,26 @@ function HomepageHeader() {
 
 export default function Home(): ReactNode {
     const { siteConfig } = useDocusaurusContext();
+
+    const title = `Griffon | Linux Antivirus`;
+    const description = "Protect you system. Clean and light.";
+    const imageUrl = "https://griffon-av.vercel.app/img/griffon.png";
+
     return (
-        <Layout
-            title={`Hello from ${siteConfig.title}`}
-            description="Description will go into a meta tag in <head />"
-        >
+        <Layout title={title} description={description}>
+            <Head>
+                <meta property="og:title" content={title} />
+                <meta property="og:description" content={description} />
+                <meta property="og:image" content={imageUrl} />
+                <meta
+                    property="og:url"
+                    content="https://griffon-av.vercel.app"
+                />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={title} />
+                <meta name="twitter:description" content={description} />
+                <meta name="twitter:image" content={imageUrl} />
+            </Head>
             <HomepageHeader />
             <main>
                 <HomepageFeatures />
