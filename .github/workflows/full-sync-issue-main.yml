@@ -1,0 +1,68 @@
+name: Full Issue Sync
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch: # allow manual run too
+
+jobs:
+    full-sync:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Sync all issues from Repo A -> Repo B
+              uses: actions/github-script@v7
+              with:
+                  github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  script: |
+                      const sourceOwner = context.repo.owner;
+                      const sourceRepo = context.repo.repo;
+                      const targetOwner = "EpitechPromo2027";
+                      const targetRepo = "G-EIP-600-REN-6-1-eip-alexis.boitel";
+
+                      // Fetch all issues (open & closed)
+                      let page = 1;
+                      let issues = [];
+                      while (true) {
+                        const res = await github.rest.issues.listForRepo({
+                          owner: sourceOwner,
+                          repo: sourceRepo,
+                          state: "all",
+                          per_page: 100,
+                          page: page
+                        });
+                        if (res.data.length === 0) break;
+                        issues = issues.concat(res.data);
+                        page++;
+                      }
+
+                      for (const issue of issues) {
+                        // Search in Repo B for a synced issue
+                        const search = await github.rest.search.issuesAndPullRequests({
+                          q: `in:body "${sourceOwner}/${sourceRepo}#${issue.number}" repo:${targetOwner}/${targetRepo}`
+                        });
+
+                        if (search.data.total_count === 0) {
+                          // Create new
+                          await github.rest.issues.create({
+                            owner: targetOwner,
+                            repo: targetRepo,
+                            title: issue.title,
+                            body: `Synced from ${sourceOwner}/${sourceRepo}#${issue.number}\n\n${issue.body || ""}`,
+                            labels: issue.labels.map(l => l.name),
+                            state: issue.state
+                          });
+                        } else {
+                          // Update existing
+                          const targetIssue = search.data.items[0];
+                          await github.rest.issues.update({
+                            owner: targetOwner,
+                            repo: targetRepo,
+                            issue_number: targetIssue.number,
+                            title: issue.title,
+                            body: `Synced from ${sourceOwner}/${sourceRepo}#${issue.number}\n\n${issue.body || ""}`,
+                            state: issue.state
+                          });
+                        }
+                      }
+                      console.log(`Synced ${issues.length} issues.`);
