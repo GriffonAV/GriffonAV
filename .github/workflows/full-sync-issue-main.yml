@@ -66,3 +66,60 @@ jobs:
                         }
                       }
                       console.log(`Synced ${issues.length} issues.`);
+
+            - name: Add issues to Project and set fields
+              uses: actions/github-script@v7
+              with:
+                  github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  script: |
+                      const { data: project } = await github.graphql(`
+                      query {
+                          node(id: "PVT_xxxxxx") {
+                          ... on ProjectV2 {
+                              id
+                              fields(first: 20) {
+                              nodes {
+                                  id
+                                  name
+                                  dataType
+                              }
+                              }
+                          }
+                          }
+                      }
+                      `);
+
+                      const IMPORTANCE_FIELD_ID = project.node.fields.nodes.find(f => f.name === "Importance").id;
+                      const COMPLEXITY_FIELD_ID = project.node.fields.nodes.find(f => f.name === "Complexity").id;
+
+                      for (const issue of issues) {
+                      // Add issue to project
+                      const addRes = await github.graphql(
+                          `mutation($proj:ID!, $content:ID!) {
+                          addProjectV2ItemById(input: { projectId: $proj, contentId: $content }) {
+                              item { id }
+                          }
+                          }`,
+                          { proj: project.node.id, content: issue.node_id }
+                      );
+
+                      const itemId = addRes.addProjectV2ItemById.item.id;
+
+                      // Example: map labels to fields
+                      for (const label of issue.labels) {
+                          if (label.name.startsWith("importance:")) {
+                          const value = label.name.split(":")[1];
+                          await github.graphql(
+                              `mutation($proj:ID!, $item:ID!, $field:ID!, $val:String!) {
+                              updateProjectV2ItemFieldValue(input: {
+                                  projectId: $proj,
+                                  itemId: $item,
+                                  fieldId: $field,
+                                  value: { singleSelectOptionId: $val }
+                              }) { clientMutationId }
+                              }`,
+                              { proj: project.node.id, item: itemId, field: IMPORTANCE_FIELD_ID, val: value }
+                          );
+                          }
+                      }
+                      }
