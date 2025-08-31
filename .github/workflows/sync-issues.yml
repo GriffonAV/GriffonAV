@@ -1,53 +1,25 @@
 name: Sync Issues to Repo B
 
 on:
-    issues:
-        types: [opened, edited, reopened, closed]
+    issues: # Trigger on new issues
+        types: [opened, edited, closed, reopened]
+    issue_comment:
+        types: [created]
+
+env:
+    GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # Ideally a PAT with write access to both repos
 
 jobs:
     sync:
         runs-on: ubuntu-latest
         steps:
-            - name: Sync issue to Repo B
-              uses: peter-evans/issue-sync@v2
+            - name: Run Issue Sync Action
+              uses: Maximisch/issue-sync-action@v2.0
               with:
-                  source: ${{ github.repository }}
-                  target: https://github.com/EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel
-                  github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-                  labels: true
-                  state: true
-                  comments: true
-
-        #   - name: Add synced issue to GitHub Project
-        #     uses: actions/github-script@v7
-        #     with:
-        #       github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        #       script: |
-        #         const issue = context.payload.issue;
-
-        #         // Get the target issue we just created in Repo B
-        #         const targetOwner = "your-org";
-        #         const targetRepo = "RepoB";
-        #         const { data: issues } = await github.rest.issues.listForRepo({
-        #           owner: targetOwner,
-        #           repo: targetRepo,
-        #           state: "all",
-        #           per_page: 1,
-        #           sort: "created",
-        #           direction: "desc"
-        #         });
-
-        #         const targetIssue = issues[0]; // latest synced issue
-
-        #         // Use GraphQL to add it to Project
-        #         const PROJECT_ID = "PVT_xxxxxxxxx"; // <-- replace with your project ID
-        #         const contentId = targetIssue.node_id;
-
-        #         await github.graphql(
-        #           `mutation($project:ID!, $content:ID!) {
-        #             addProjectV2ItemById(input: {projectId: $project, contentId: $content}) {
-        #               item { id }
-        #             }
-        #           }`,
-        #           { project: PROJECT_ID, content: contentId }
-        #         );
+                  target_repo: "EpitechPromo2027/G-EIP-600-REN-6-1-eip-alexis.boitel"
+                  only_sync_on_label: "" # Optional: specify a label to filter
+                  only_sync_main_issue: "false" # Set "true" if you don't want to sync comments
+                  source_url: "" # Optional override of API endpoint
+                  target_url: "api.github.com" # Defaults to GitHub Cloud
+                  source_pat: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  target_pat: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
