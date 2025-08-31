@@ -1,5 +1,6 @@
 name: Mirror Repository with Pixta-dev
-gron:
+
+on:
     push:
         branches:
             - main

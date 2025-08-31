@@ -35,7 +35,7 @@ export default function Home(): ReactNode {
     const { siteConfig } = useDocusaurusContext();
 
     const title = `Griffon | Linux Antivirus`;
-    const description = "Protect you system. Clean and light.";
+    const description = "Keep it safe. Simple and efficient.";
     const imageUrl = "https://griffon-av.vercel.app/img/griffon.png";
 
     return (
