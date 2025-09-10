@@ -67,3 +67,5 @@ export default tseslint.config([
   },
 ])
 ```
+
+https://trading-lab.tistory.com/5

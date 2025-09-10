@@ -8,9 +8,6 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        },
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "types": ["node"]
+        }
     }
 }
