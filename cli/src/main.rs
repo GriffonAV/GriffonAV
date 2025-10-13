@@ -1,3 +1,5 @@
+mod cli; // Declare the `cli` folder as a module
+
 fn main() {
-    println!("Hello, world!");
+    cli::cli_sh();
 }
