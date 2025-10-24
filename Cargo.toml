@@ -1,8 +1,10 @@
 [workspace]
 members = [
-    "gui/src-tauri", "core", "cli", "daemon",
+    "gui/src-tauri", "core", "cli", "daemon"
 ]
+exclude = ["proto-yara-x"]
 resolver = "2"
+
 
 [workspace.dependencies]
 # Shared dependencies across the workspace

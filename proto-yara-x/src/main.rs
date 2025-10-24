@@ -21,6 +21,22 @@ fn get_rule(folder_path: &str) -> String {
     panic!("No rule file found in the specified folder");
 }
 
+fn get_file(folder_path: &str) -> String {
+    //get file list
+    let paths = std::fs::read_dir(folder_path).unwrap();
+    for path in paths {
+        let path = path.unwrap().path();
+        if path.is_file() {
+            // if .yar or .yara extension
+
+            let contents =
+                fs::read_to_string(path).expect("Should have been able to read the file");
+            return contents;
+        }
+    }
+    panic!("No rule file found in the specified folder");
+}
+
 fn main() {
     println!("Creating YARA compiler...");
     let mut compiler = yara_x::Compiler::new();
@@ -36,8 +52,8 @@ fn main() {
     println!("Creating scanner...");
     let mut scanner = yara_x::Scanner::new(&rules);
 
-    println!("Scanning data: 'Lorem ipsum'");
-    let results = scanner.scan("Lorem ipsum".as_bytes()).unwrap();
+    let file_contents = get_file("dummy-files");
+    let results = scanner.scan(file_contents.as_bytes()).unwrap();
 
     println!(
         "Number of matching rules: {}",
