@@ -10,17 +10,18 @@ function TitleBar() {
   const [isTauri, setIsTauri] = useState(false);
 
   useEffect(() => {
-    // Check if we're running in Tauri
-    const checkTauri = async () => {
-      try {
-        // @ts-ignore - __TAURI__ is injected by Tauri
-        setIsTauri(typeof window !== 'undefined' && window.__TAURI__ !== undefined);
-      } catch {
-        setIsTauri(false);
-      }
-    };
-    checkTauri();
-  }, []);
+  const detectTauri = async () => {
+    try {
+      await getCurrentWindow();  // If this doesn't throw, you're in Tauri
+      setIsTauri(true);
+    } catch {
+      setIsTauri(false);
+    }
+  };
+
+  detectTauri();
+}, []);
+
 
   useEffect(() => {
     if (!isTauri) return; // Skip Tauri-specific code in web
