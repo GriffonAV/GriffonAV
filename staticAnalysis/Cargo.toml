@@ -1,5 +1,5 @@
 [package]
-name = "proto-yara-x"
+name = "staticAnalysis"
 version = "0.1.0"
 edition = "2024"
 
