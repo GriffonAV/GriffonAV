@@ -18,3 +18,5 @@ target/
 
 .vscode
 .idea
+
+.lock
