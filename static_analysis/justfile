@@ -1,0 +1,4 @@
+# justfile
+
+prepare:
+    cargo run --bin prepare -- --rules-repo https://github.com/Yara-Rules/rules --samples 200 --hit-rate 0.1 --fetch-eicar --force
