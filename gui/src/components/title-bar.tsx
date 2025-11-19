@@ -6,11 +6,26 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { SearchInput } from "./search";
 
 function TitleBar() {
-  const appWindow = getCurrentWindow();
-
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isTauri, setIsTauri] = useState(false);
 
   useEffect(() => {
+    // Check if we're running in Tauri
+    const checkTauri = async () => {
+      try {
+        // @ts-ignore - __TAURI__ is injected by Tauri
+        setIsTauri(typeof window !== 'undefined' && window.__TAURI__ !== undefined);
+      } catch {
+        setIsTauri(false);
+      }
+    };
+    checkTauri();
+  }, []);
+
+  useEffect(() => {
+    if (!isTauri) return; // Skip Tauri-specific code in web
+
+    const appWindow = getCurrentWindow();
     const minimizeButton = document.getElementById("titlebar-minimize");
     const maximizeButton = document.getElementById("titlebar-maximize");
     const closeButton = document.getElementById("titlebar-close");
@@ -34,7 +49,7 @@ function TitleBar() {
       maximizeButton?.removeEventListener("click", handleMaximize);
       closeButton?.removeEventListener("click", handleClose);
     };
-  }, []);
+  }, [isTauri]);
 
   return (
     <div className="px-4 py-3 flex items-center" data-tauri-drag-region>
@@ -49,30 +64,34 @@ function TitleBar() {
       <div className="font-bold">Griffon</div>
       <div className="flex-1"></div>
       <SearchInput></SearchInput>
-      <Button
-        className="cursor-pointer"
-        variant={"ghost"}
-        id="titlebar-minimize"
-        title="minimize"
-      >
-        <Minus />
-      </Button>
-      <Button
-        className="cursor-pointer"
-        variant={"ghost"}
-        id="titlebar-maximize"
-        title="maximize"
-      >
-        {isMaximized ? <Copy /> : <Square />}
-      </Button>
-      <Button
-        className="cursor-pointer"
-        variant={"ghost"}
-        id="titlebar-close"
-        title="close"
-      >
-        <X />
-      </Button>
+      {isTauri && (
+        <>
+          <Button
+            className="cursor-pointer"
+            variant={"ghost"}
+            id="titlebar-minimize"
+            title="minimize"
+          >
+            <Minus />
+          </Button>
+          <Button
+            className="cursor-pointer"
+            variant={"ghost"}
+            id="titlebar-maximize"
+            title="maximize"
+          >
+            {isMaximized ? <Copy /> : <Square />}
+          </Button>
+          <Button
+            className="cursor-pointer"
+            variant={"ghost"}
+            id="titlebar-close"
+            title="close"
+          >
+            <X />
+          </Button>
+        </>
+      )}
     </div>
   );
 }
