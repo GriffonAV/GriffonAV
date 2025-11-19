@@ -2,7 +2,7 @@
 members = [
     "gui/src-tauri", "core", "cli", "daemon"
 ]
-exclude = ["proto-yara-x"]
+exclude = ["static_analysis"]
 resolver = "2"
 
 
