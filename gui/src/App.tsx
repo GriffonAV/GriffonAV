@@ -1,56 +1,36 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { TitleBar } from "./components/title-bar";
 
 function App() {
-    const [scanResult, setScanResult] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="flex h-screen flex-col">
+        <TitleBar />
+        <div className="flex-1 flex flex-row">
+          <div className="flex flex-col w-48">
+            <div className="mt-6"></div>
 
-    const handleScan = async () => {
-        setLoading(true);
-        setError(null);
-        setScanResult(null);
-
-        try {
-            const pathToScan = "/home/file.txt";
-
-            // Call Rust backend command via Tauri invoke
-            const result = await invoke<string>("scan_from_gui", {
-                path: pathToScan,
-            });
-
-            setScanResult(result);
-        } catch (err) {
-            setError(String(err));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex min-h-svh flex-col items-center justify-center p-4">
-            <img
-                src="/assets/logo.png"
-                alt="Griffon Logo"
-                style={{
-                    imageRendering: "pixelated",
-                }}
-                className="w-32 h-auto"
-            />
-
-            <Button onClick={handleScan} disabled={loading}>
-                {loading ? "Scanning..." : "Start Scan"}
-            </Button>
-
-            {scanResult && (
-                <p className="mt-4 text-green-600">Scan result: {scanResult}</p>
-            )}
-
-            {error && <p className="mt-4 text-red-600">Error: {error}</p>}
+            <div className="mt-2 flex bg-sidebar-accent rounded-none h-10 items-center">
+              <div className="bg-red-500 w-2 h-full mr-6"></div>
+              <span>extensions</span>
+            </div>
+            <div className="mt-2 flex h-8 items-center">
+              <div className="w-2 h-full mr-6"></div>
+              <span>extensions</span>
+            </div>
+            <div className="mt-2 flex h-10 items-center">
+              <div className="w-2 h-full mr-6"></div>
+              <span>extensions</span>
+            </div>
+          </div>
+          <div className="flex h-full w-full bg-secondary text-secondary-foreground p-4 radius-0">
+            content
+          </div>
         </div>
-    );
+        {/* <ModeToggle /> */}
+      </div>
+    </ThemeProvider>
+  );
 }
 
 export default App;

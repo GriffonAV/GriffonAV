@@ -40,11 +40,3 @@
 .read-the-docs {
     color: #888;
 }
-
-:root {
-    --radius: 0.5rem;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-}
