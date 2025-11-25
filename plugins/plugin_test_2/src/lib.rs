@@ -6,9 +6,6 @@ use abi_stable::{
     std_types::{RResult, RString},
 };
 use interface::{PluginI, PluginRoot, PluginRoot_Ref};
-use std::thread::sleep;
-use std::time::Duration;
-use std::time::Instant;
 
 #[sabi_extern_fn]
 pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
