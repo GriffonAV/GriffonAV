@@ -1,9 +1,8 @@
 [package]
-name = "daemon"
+name = "runner"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 interface = { path = "../interface" }
 abi_stable = "0.11.3"
-anyhow = "1.0.100"

@@ -1,12 +1,13 @@
 use abi_stable::StableAbi;
 use abi_stable::library::RootModule;
-use abi_stable::std_types::{RResult, RString};
+use abi_stable::std_types::{RResult, RString, RVec, Tuple2};
 
 #[repr(C)]
 #[derive(StableAbi)]
 #[sabi(kind(Prefix(prefix_ref = PluginRef)))]
 pub struct PluginI {
-    pub start: extern "C" fn() -> RResult<(), RString>,
+    pub init: extern "C" fn() -> RResult<RVec<Tuple2<RString, RString>>, RString>,
+    pub handle_message: extern "C" fn(RString) -> RString,
 }
 
 #[repr(C)]

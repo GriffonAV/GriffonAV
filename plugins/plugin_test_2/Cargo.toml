@@ -7,5 +7,5 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-interface = { path = "../interface" }
+interface = { path = "../../plugin_manager/interface" }
 abi_stable = "0.11.3"

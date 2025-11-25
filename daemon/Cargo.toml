@@ -1,3 +1,12 @@
-[workspace]
-resolver = "3"
-members = ["daemon", "interface", "plugin_test", "plugin_test_2"]
+[package]
+name = "daemon"
+version = "0.1.0"
+edition = "2024"
+default-run = "daemon"
+
+[dependencies]
+interface = { path = "../plugin_manager/interface" }
+abi_stable = "0.11.3"
+anyhow = "1.0.100"
+nix = { version = "0.30.1", features = ["socket"] }
+plugin_manager = { path = "../plugin_manager/plugin_manager" }
