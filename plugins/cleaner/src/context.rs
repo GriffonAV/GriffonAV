@@ -6,6 +6,6 @@ use crate::CleanerConfig;
 pub struct ExecutionContext {
     pub config: CleanerConfig,
     pub dry_run: bool,
-    pub root_paths: Vec<PathBuf>, // ex: /, /var, /home
+    pub root_paths: Vec<PathBuf>,
     // tu peux ajouter: logger, runtime handle, etc.
 }

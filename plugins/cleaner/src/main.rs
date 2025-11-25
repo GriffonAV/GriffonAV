@@ -17,7 +17,7 @@ fn human_readable(bytes: u64) -> String {
 }
 
 fn print_cache_report(global: &GlobalReport) {
-    // On récupère le report du module "cache"
+    // On récupère le report du module cache
     let cache_report = match global.per_module.get("cache") {
         Some(r) => r,
         None => {
@@ -34,7 +34,6 @@ fn print_cache_report(global: &GlobalReport) {
     // Par dossier racine
     if !cache_report.per_root_path.is_empty() {
         println!("\nPar dossier :");
-        // Optionnel : trier pour un affichage plus stable
         let mut entries: Vec<_> = cache_report.per_root_path.iter().collect();
         entries.sort_by_key(|(path, _)| *path);
 
@@ -125,7 +124,7 @@ fn main() {
 
         enable_system_cache: true,
         enable_user_cache: true,
-        enable_browser_cache: false,     // on évite de casser les sessions des users
+        enable_browser_cache: false,     // on évite de casser les sessions de navigation des users
         enable_dev_cache: true,
         enable_package_cache: true,
         enable_desktop_cache: true,
@@ -133,7 +132,7 @@ fn main() {
 
     let ctx = ExecutionContext {
         config,
-        dry_run: true, // garde true pour tester
+        dry_run: true, // garde true pour tester sinon tu vas vraiment supprimer des fichiers :)
         root_paths: vec!["/".into()],
     };
 

@@ -67,7 +67,7 @@ impl CacheCleaner {
                 }
             };
 
-            // On ne touche qu'aux fichiers (pas aux dossiers ici)
+            // On ne touche qu'aux fichiers, pas aux dossiers ici
             if entry.file_type().is_file() {
                 let file_path = entry.path();
 
