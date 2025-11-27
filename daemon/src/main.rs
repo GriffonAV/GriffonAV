@@ -2,7 +2,7 @@ use std::io;
 use std::io::Write;
 use plugin_manager::{PluginManager, LogLevel};
 
-static PLUGIN_DIR_PATH: &str = "./target/debug";
+static PLUGIN_DIR_PATH: &str = "./plugins";
 
 fn main() {
     let mut pm = PluginManager::new(PLUGIN_DIR_PATH, LogLevel::Info);
