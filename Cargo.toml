@@ -1,5 +1,5 @@
 [workspace]
-members = ["gui/src-tauri", "core", "cli", "daemon", "plugin_manager/interface", "plugins/plugin_test", "plugins/plugin_test_2", "plugin_manager/runner", "plugin_manager/plugin_manager"]
+members = ["gui/src-tauri", "cli", "daemon", "plugin_manager/interface", "plugins/plugin_test", "plugins/plugin_test_2", "plugin_manager/runner", "plugin_manager/plugin_manager"]
 exclude = ["static_analysis"]
 resolver = "2"
 
