@@ -8,19 +8,15 @@ export default function PluginPage() {
   const [logs, setLogs] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
 
-  function startAnalysis() {
+   function startAnalysis() {
     if (running) return;
 
     setRunning(true);
-    setLogs(["Starting analysis…"]);
+    setLogs(["Loading rules..."]);
 
     // Fake analysis simulation
-    const steps = [
-      "Loading target data…",
-      "Analyzing structure…",
-      "Detecting anomalies…",
-      "Generating report…",
-      "Analysis complete! ✔",
+       const steps = [
+      "No rules found in './' directory.",
     ];
 
     let i = 0;
@@ -38,10 +34,13 @@ export default function PluginPage() {
   return (
     <div className="flex flex-col h-full gap-4">
       <h1 className="text-lg font-semibold">
-        Plugin #{pid} — Analyser
+        Plugin #{pid}
       </h1>
 
-      <Button
+{/* if pid == 1 */}
+    { pid === "1" && (
+        <>
+        <Button
         onClick={startAnalysis}
         disabled={running}
         className="w-fit"
@@ -60,6 +59,8 @@ export default function PluginPage() {
           ))
         )}
       </Card>
+        </>
+    ) }
     </div>
   );
 }
