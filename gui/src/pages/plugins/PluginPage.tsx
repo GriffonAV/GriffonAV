@@ -1,66 +1,64 @@
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+interface PluginInfo {
+  pid: number;
+  name: string;
+  functions: string[];
+}
+
 export default function PluginPage() {
   const { pid } = useParams();
+  const [plugin, setPlugin] = useState<PluginInfo | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
-  const [running, setRunning] = useState(false);
 
-   function startAnalysis() {
-    if (running) return;
+  useEffect(() => {
+    invoke<PluginInfo[]>("list_plugins_cmd").then((list) => {
+      const found = list.find((p) => p.pid.toString() === pid);
+      if (found) setPlugin(found);
+    });
 
-    setRunning(true);
-    setLogs(["Loading rules..."]);
+    const unlisten = listen<string>("plugin-log", (event) => {
+      setLogs((prev) => [...prev, event.payload]);
+    });
 
-    // Fake analysis simulation
-       const steps = [
-      "No rules found in './' directory.",
-    ];
+    return () => {
+      unlisten.then((f) => f());
+    };
+  }, [pid]);
 
-    let i = 0;
-    const interval = setInterval(() => {
-      setLogs((prev) => [...prev, steps[i]]);
-      i++;
-
-      if (i >= steps.length) {
-        clearInterval(interval);
-        setRunning(false);
-      }
-    }, 800);
+  function send(msg: string) {
+    if (!plugin) return;
+    invoke("message_plugin", { pid: plugin.pid, msg });
   }
+
+  if (!plugin) return <div>Plugin not found</div>;
 
   return (
     <div className="flex flex-col h-full gap-4">
       <h1 className="text-lg font-semibold">
-        Plugin #{pid}
+        {plugin.name} (PID {plugin.pid})
       </h1>
 
-{/* if pid == 1 */}
-    { pid === "1" && (
-        <>
-        <Button
-        onClick={startAnalysis}
-        disabled={running}
-        className="w-fit"
-      >
-        {running ? "Running..." : "Start Analysis"}
-      </Button>
+      <div className="flex gap-2">
+        {plugin.functions.map((fn) => (
+          <Button className="cursor-pointer" key={fn} onClick={() => send(fn)}>{fn}</Button>
+        ))}
+      </div>
 
-      <Card className="flex-1 p-3 bg-black/60 text-green-400 font-mono text-sm overflow-auto border">
+      <Card className="flex-1 p-3 bg-black text-green-400 font-mono text-sm overflow-auto border">
         {logs.length === 0 ? (
-          <span className="opacity-50">No logs yet…</span>
+          <span className="opacity-50">No output yet…</span>
         ) : (
-          logs.map((log, i) => (
-            <div key={i} className="whitespace-pre-wrap">
-              $ {log}
-            </div>
+          logs.map((line, i) => (
+            <div key={i} className="whitespace-pre-wrap">$ {line}</div>
           ))
         )}
       </Card>
-        </>
-    ) }
     </div>
   );
 }

@@ -8,7 +8,7 @@ use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command};
 
-static RUNNER_BINARY: &str = "./target/debug/runner";
+static RUNNER_BINARY: &str = "../../target/debug/runner";
 
 #[derive(Debug)]
 struct RunningPlugin {
