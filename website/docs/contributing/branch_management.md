@@ -2,8 +2,9 @@
 sidebar_position: 1
 ---
 
+# Branch management
 
-# Workflow example
+## Workflow example
 Context : You want to create a new feature / fix a bug  
 Step 1 : create a new branch from dev named after what you want to do ex: `feat/static_analysys/support_for_large_files`  
 Step 2 : when the feature is implemented create a pull request to dev  

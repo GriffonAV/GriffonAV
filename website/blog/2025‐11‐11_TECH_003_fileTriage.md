@@ -18,6 +18,8 @@ This question triggered two necessary research topics :
 1. is there specific YARA rules for specific files format ?
 2. if there is, is it interesting to use a triage method on those files ?
 
+<!-- truncate -->
+
 ## quick answer
 
 1. Yes there exist specific rules about specific files format as demonstrated by [this article describing a specific rule to detect certain pattern in a JPEG file](https://blog.didierstevens.com/2015/01/20/yara-rule-detecting-jpeg-exif-with-eval/)

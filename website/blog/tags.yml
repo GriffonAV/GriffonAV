@@ -7,4 +7,8 @@ orga:
   label: Organisation
   permalink: /organisation
   description: report on the organisation of the GriffonAV project
-  
+
+devlog:
+  label: Devlog
+  permalink: /devlog
+  description: report on development progress and milestones
