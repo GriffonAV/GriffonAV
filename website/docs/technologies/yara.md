@@ -48,7 +48,7 @@ Information in the metadata field depends on what standard the one who created t
 
 The name of the rule is also an important information, as it is oftentimes the first and only information the user see about the rule. As such it is a good practice to include information in the form of tags in the name of the rule. For example you could use _MacOS to detail that the malware operates on mac.  
 
-A list of the most common tags and good practices can be found here: <https://github.com/Neo23x0/YARA-Style-Guide>
+A list of the most common tags and good practices can be found here: [yara-style-guide](https://github.com/Neo23x0/YARA-Style-Guide)
 
 ## How we scan your computer
 

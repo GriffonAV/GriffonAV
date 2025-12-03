@@ -7,7 +7,7 @@ sidebar_position: 2
 See how [a minor change](#examples) to your commit message style can make a difference. 
 
 <pre>
-git commit -m"<b><a href="#types">&lt;type&gt;</a></b></font>(<b><a href="#scopes">&lt;optional scope&gt;</a></b>): <b><a href="#description">&lt;description&gt;</a></b>" \
+git commit -m"<b><a href="#types">&lt;type&gt;</a></b>(<b><a href="#scopes">&lt;optional scope&gt;</a></b>): <b><a href="#description">&lt;description&gt;</a></b>" \
   -m"<b><a href="#body">&lt;optional body&gt;</a></b>" \
   -m"<b><a href="#footer">&lt;optional footer&gt;</a></b>"
 </pre>
@@ -19,7 +19,7 @@ git commit -m"<b><a href="#types">&lt;type&gt;</a></b></font>(<b><a href="#scope
 
 ### General Commit
 <pre>
-<b><a href="#types">&lt;type&gt;</a></b></font>(<b><a href="#scopes">&lt;optional scope&gt;</a></b>): <b><a href="#description">&lt;description&gt;</a></b>
+<b><a href="#types">&lt;type&gt;</a></b>(<b><a href="#scopes">&lt;optional scope&gt;</a></b>): <b><a href="#description">&lt;description&gt;</a></b>
 <sub>empty separator line</sub>
 <b><a href="#body">&lt;optional body&gt;</a></b>
 <sub>empty separator line</sub>
@@ -199,7 +199,5 @@ The `footer` should contain issue references and informations about **Breaking C
 - https://www.conventionalcommits.org/
 - https://github.com/angular/angular/blob/master/CONTRIBUTING.md
 - http://karma-runner.github.io/1.0/dev/git-commit-msg.html
-<br>
-
 - https://github.com/github/platform-samples/tree/master/pre-receive-hooks  
 - https://github.community/t5/GitHub-Enterprise-Best-Practices/Using-pre-receive-hooks-in-GitHub-Enterprise/ba-p/13863
