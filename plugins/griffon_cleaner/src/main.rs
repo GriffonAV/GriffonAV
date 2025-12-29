@@ -2,6 +2,12 @@ use griffon_cleaner::{
     ExecutionContext, CleanerConfig, Profile,
     run_modules, default_modules, GlobalReport,
 };
+use abi_stable::{
+    export_root_module,
+    prefix_type::PrefixTypeTrait,
+    sabi_extern_fn,
+    std_types::{RResult, RString, RVec, Tuple2},
+};
 
 fn human_readable(bytes: u64) -> String {
     const UNITS: [&str; 5] = ["B", "KB", "MB", "GB", "TB"];
@@ -113,6 +119,49 @@ fn whats_enabled_modules(cfg: &CleanerConfig) -> Vec<&'static str> {
     }
 
     res
+}
+
+#[sabi_extern_fn]
+pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
+    let mut info = RVec::new();
+
+    info.push(Tuple2(
+        RString::from("author"),
+        RString::from("Ewen Emeraud"),
+    ));
+    info.push(Tuple2(RString::from("name"), RString::from("Test Name1")));
+    info.push(Tuple2(
+        RString::from("description"),
+        RString::from("Plugin Cleaner"),
+    ));
+    info.push(Tuple2(
+        RString::from("function"),
+        RString::from("run_modules"),
+    ));
+
+    let config = CleanerConfig {
+        profile: Profile::Safe,
+        max_log_retention_days: 30,
+        max_log_size_gb: 2.0,
+        min_bigfile_size_mb: 100,
+
+        enable_system_cache: true,
+        enable_user_cache: true,
+        enable_browser_cache: false,     // on évite de casser les sessions de navigation des users
+        enable_dev_cache: true,
+        enable_package_cache: true,
+        enable_desktop_cache: true,
+    };
+
+    let ctx = ExecutionContext {
+        config,
+        dry_run: true, // garde true pour tester sinon tu vas vraiment supprimer des fichiers :)
+        root_paths: vec!["/".into()],
+    };
+
+    let modules = default_modules();
+
+    RResult::ROk(info)
 }
 
 fn main() {

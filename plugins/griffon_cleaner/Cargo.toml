@@ -1,10 +1,10 @@
-[workspace]
-
 [package]
-name = "griffon-cleaner"
+name = "griffon_cleaner"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 walkdir = "2.5.0"
 thiserror = "2.0.17"
+interface = { workspace = true }
+abi_stable = { workspace = true }
