@@ -121,6 +121,34 @@ fn whats_enabled_modules(cfg: &CleanerConfig) -> Vec<&'static str> {
     res
 }
 
+fn make_config() -> CleanerConfig {
+    CleanerConfig {
+        profile: Profile::Safe,
+        max_log_retention_days: 30,
+        max_log_size_gb: 2.0,
+        min_bigfile_size_mb: 100,
+
+        enable_system_cache: true,
+        enable_user_cache: true,
+        enable_browser_cache: false,
+        enable_dev_cache: true,
+        enable_package_cache: true,
+        enable_desktop_cache: true,
+    }
+}
+
+fn make_ctx() -> ExecutionContext {
+    ExecutionContext {
+        config: make_config(),
+        dry_run: true,
+        root_paths: vec!["/".into()],
+    }
+}
+
+fn make_modules() -> Vec<Box<dyn griffon_cleaner::CleanerModule>> {
+    default_modules()
+}
+
 #[sabi_extern_fn]
 pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
     let mut info = RVec::new();
@@ -136,32 +164,37 @@ pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
     ));
     info.push(Tuple2(
         RString::from("function"),
-        RString::from("run_modules"),
+        RString::from("run"),
     ));
 
-    let config = CleanerConfig {
-        profile: Profile::Safe,
-        max_log_retention_days: 30,
-        max_log_size_gb: 2.0,
-        min_bigfile_size_mb: 100,
-
-        enable_system_cache: true,
-        enable_user_cache: true,
-        enable_browser_cache: false,     // on évite de casser les sessions de navigation des users
-        enable_dev_cache: true,
-        enable_package_cache: true,
-        enable_desktop_cache: true,
-    };
-
-    let ctx = ExecutionContext {
-        config,
-        dry_run: true, // garde true pour tester sinon tu vas vraiment supprimer des fichiers :)
-        root_paths: vec!["/".into()],
-    };
-
-    let modules = default_modules();
-
     RResult::ROk(info)
+}
+
+#[sabi_extern_fn]
+extern "C" fn handle_message(msg: RString) -> RString {
+    print!("[LIBCLEAN](msg) Received message: {}", msg.as_str());
+
+    let res = match msg.as_str() {
+        "fn:run" => {
+            run();
+            RString::from(format!("ACK_Cleaner {}\n", msg.as_str()))
+        }
+        _ => RString::from(format!("ACK LIBCLEAN {}\n", msg.as_str())),
+    };
+    res
+}
+
+fn run() -> RResult<GlobalReport, RString> {
+    let ctx = make_ctx();
+    let modules = make_modules();
+
+    match run_modules(&ctx, &modules) {
+        Ok(report) => RResult::ROk(report),
+        Err(e) => RResult::RErr(RString::from(format!(
+            "Erreur lors de l'exécution du cleaner : {:?}",
+            e
+        ))),
+    }
 }
 
 fn main() {

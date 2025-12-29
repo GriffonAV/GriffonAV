@@ -8,3 +8,6 @@ walkdir = "2.5.0"
 thiserror = "2.0.17"
 interface = { workspace = true }
 abi_stable = { workspace = true }
+
+[lib]
+crate-type = ["cdylib"]
