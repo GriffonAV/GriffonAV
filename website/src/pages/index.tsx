@@ -39,10 +39,10 @@ function HeroBanner() {
           />
         </Heading>
         <div className={styles.indexCtas}>
-          <Link className="button button--primary" to="/docs">
+          <Link className="button button--primary" to="/docs/intro">
             <Translate>Get Started</Translate>
           </Link>
-          <Link className="button button--info" to="https://docusaurus.new">
+          <Link className="button button--info" to="/docs/intro">
             <Translate>Try a Demo</Translate>
           </Link>
           <span className={styles.indexCtasGitHubButtonWrapper}>
