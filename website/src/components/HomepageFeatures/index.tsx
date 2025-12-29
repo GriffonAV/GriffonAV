@@ -11,25 +11,28 @@ type FeatureItem = {
 };
 
 const FeatureList: FeatureItem[] = [
-  {
-    title: "Easy to Use",
-    // Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
-    Img: require("@site/static/img/easy-to-use.png").default,
-    description: (
-      <>
-        Griffon was designed from the ground up to be easily installed and
-        to configure.
-      </>
-    ),
-  },
+  // {
+  //   title: "Griffon",
+  //   // Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
+  //   Img: require("@site/static/img/rust.png").default,
+  //   description: (
+  //     <>
+  //       Griffon is a school project aimed at developing an modular tools for
+  //       linux security focusing on the analysis of malware and suspicious files.
+  //       It is designed to be easy to use, with a simple and intuitive interface
+  //       that allows users to quickly analyze files and identify potential
+  //       threats.
+  //     </>
+  //   ),
+  // },
   {
     title: "Powered by Rust",
     Img: require("@site/static/img/rust.png").default,
     description: (
       <>
         Griffon AV is built using Rust, a modern systems programming language
-        known for its performance, safety, and concurrency. This ensures that our
-        autonomous vehicle solutions are both reliable and efficient.
+        known for its performance, safety, and concurrency. This ensures that
+        our autonomous vehicle solutions are both reliable and efficient.
       </>
     ),
   },

@@ -8,17 +8,17 @@ import Heading from "@theme/Heading";
 import Head from "@docusaurus/Head";
 import Translate, { translate } from "@docusaurus/Translate";
 import useBaseUrl, { useBaseUrlUtils } from "@docusaurus/useBaseUrl";
-
-import styles from "./index.module.css";
+import styles from "./styles.module.css";
 
 function HeroBanner() {
   const { siteConfig } = useDocusaurusContext();
 
   return (
-    <header className={clsx("hero hero--primary", styles.heroBanner)}>
-      <div className="container">
+    <div className={styles.hero} data-theme="dark">
+      <div className={styles.heroInner}>
         <Heading as="h1" className={styles.heroProjectTagline}>
           <img
+            alt={translate({ message: "Docusaurus with Keytar" })}
             className={styles.heroLogo}
             src={useBaseUrl("/img/logo.png")}
             width="200"
@@ -31,42 +31,88 @@ function HeroBanner() {
               __html: translate({
                 id: "homepage.hero.title",
                 message:
-                  "Build <b>optimized</b> websites <b>quickly</b>, focus on your <b>content</b>",
+                  "A <b>Fast, modular, and secure</b> security engine for Linux, Writen in <b>Rust</b>",
                 description:
                   "Home page hero title, can contain simple html tags",
               }),
             }}
           />
         </Heading>
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro"
-          >
-            Get Griffon for Linux (AppImage)
+        <div className={styles.indexCtas}>
+          <Link className="button button--primary" to="/docs">
+            <Translate>Get Started</Translate>
           </Link>
+          <Link className="button button--info" to="https://docusaurus.new">
+            <Translate>Try a Demo</Translate>
+          </Link>
+          <span className={styles.indexCtasGitHubButtonWrapper}>
+            <iframe
+              className={styles.indexCtasGitHubButton}
+              src="https://ghbtns.com/github-btn.html?user=GriffonAV&repo=GriffonAV&type=star&count=true&size=large"
+              width={160}
+              height={30}
+              title="GitHub Stars"
+            />
+          </span>
         </div>
-        <span className={styles.indexCtasGitHubButtonWrapper}>
-          <iframe
-            className={styles.indexCtasGitHubButton}
-            src="https://ghbtns.com/github-btn.html?user=GriffonAV&repo=GriffonAV&type=star&count=true&size=large"
-            width={160}
-            height={30}
-            title="GitHub Stars"
-          />
-        </span>
       </div>
-    </header>
+    </div>
+  );
+}
+
+function TopBannerForRelease() {
+  // TODO We should be able to strongly type customFields
+  //  Refactor to use a CustomFields interface + TS declaration merging
+  const announcedVersion = useDocusaurusContext().siteConfig.customFields
+    ?.announcedVersion as string;
+
+  return (
+    <div className={styles.topBanner}>
+      <div className={styles.topBannerTitle}>
+        {"🎉\xa0"}
+        <Link
+          to={`/blog/releases/${announcedVersion}`}
+          className={styles.topBannerTitleText}
+        >
+          <Translate
+            id="homepage.banner.launch.newVersion"
+            values={{ newVersion: announcedVersion }}
+          >
+            {"Docusaurus\xa0{newVersion} is\xa0out!️"}
+          </Translate>
+        </Link>
+        {"\xa0🥳"}
+      </div>
+    </div>
+  );
+}
+
+function TopBanner() {
+  // TODO We should be able to strongly type customFields
+  //  Refactor to use a CustomFields interface + TS declaration merging
+  const announcedVersion = useDocusaurusContext().siteConfig.customFields
+    ?.announcedVersion as string;
+
+  return (
+    <div className={styles.topBanner}>
+      <div className={styles.topBannerTitle}>
+        {"\xa0🚧\xa0"}
+        Work in Progress
+        {"\xa0🚧\xa0"}
+      </div>
+    </div>
   );
 }
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
-  return <HeroBanner />;
+
+  return (
+    <main>
+      <TopBanner />
+      <HeroBanner />
+    </main>
+  );
 }
 
 export default function Home(): ReactNode {
