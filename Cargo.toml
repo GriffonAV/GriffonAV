@@ -1,11 +1,15 @@
 [workspace]
 members = [
-    "gui/src-tauri", "cli", "daemon", "plugin_manager/interface", "plugins/plugin_test", "plugins/plugin_test_2", "plugin_manager/runner", "plugin_manager/plugin_manager"]
+    "cli", "daemon", "plugin_manager/interface", "plugins/plugin_test", "plugins/plugin_test_2", "plugin_manager/runner", "plugin_manager/plugin_manager"
+, "plugin_manager/ipc_protocol"] #"gui/src-tauri" as been remove for test and work
 resolver = "2"
 
 [workspace.dependencies]
 # Shared dependencies across the workspace
 # No one yet
+plugin_manager = { path = "plugin_manager/plugin_manager" }
+interface = { path = "plugin_manager/interface" }
+ipc_protocol = { path = "plugin_manager/ipc_protocol" }
 
 # Testing dependencies
 mockall = "0.12"
