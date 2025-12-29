@@ -1,6 +1,8 @@
 use std::io;
 use std::io::Write;
 use plugin_manager::{PluginManager, LogLevel};
+use ipc_protocol;
+use ipc_protocol::ipc_payload::Message;
 
 static PLUGIN_DIR_PATH: &str = "./plugins";
 
@@ -73,26 +75,52 @@ fn main() {
                 pm.kill_plugin(pid);
             }
 
-            "msg" => {
+            
+            "call" => {
                 let pid_str = parts.next();
-                let msg = parts.next();
+                let rest = parts.next();
 
-                if pid_str.is_none() || msg.is_none() {
-                    println!("[CORE](INPUT ERROR) Usage: msg <PID> <message>");
+                if pid_str.is_none() || rest.is_none() {
+                    println!("[CORE](INPUT ERROR) Usage: call <PID> <fn_name> <arg1|arg2|...>");
                     continue;
                 }
 
                 let pid: u32 = match pid_str.unwrap().parse() {
                     Ok(p) => p,
                     Err(_) => {
-                        println!("[CORE](INPUT ERROR) Invalid PID: {:?}", pid_str);
+                        println!("[CORE](INPUT ERROR) Invalid PID: {pid_str:?}");
                         continue;
                     }
                 };
 
-                let message = msg.unwrap();
+                let rest = rest.unwrap();
+                let mut rest_parts = rest.splitn(2, ' ');
+                let fn_name = match rest_parts.next() {
+                    Some(f) if !f.is_empty() => f.to_string(),
+                    _ => {
+                        println!("[CORE](INPUT ERROR) Usage: call <PID> <fn_name> <arg1|arg2|...>");
+                        continue;
+                    }
+                };
 
-                pm.send_msg(pid, message);
+                let args_raw = rest_parts.next().unwrap_or("");
+                let args: Vec<String> = if args_raw.is_empty() {
+                    Vec::new()
+                } else {
+                    args_raw
+                        .split('|')
+                        .map(|s| s.trim())
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.to_string())
+                        .collect()
+                };
+
+                let call_payload = ipc_protocol::ipc_payload::CallPayload { fn_name, args };
+
+                match pm.send_call(pid, call_payload) {
+                    Ok(req_id) => println!("[CORE] CALL sent (request_id={req_id})"),
+                    Err(e) => println!("[CORE](ERROR) Failed to send CALL: {e}"),
+                }
             }
 
             "" => {}
