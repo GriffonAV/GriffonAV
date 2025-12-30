@@ -2,7 +2,6 @@ use std::io;
 use std::io::Write;
 use plugin_manager::{PluginManager, LogLevel};
 use ipc_protocol;
-use ipc_protocol::ipc_payload::Message;
 
 static PLUGIN_DIR_PATH: &str = "./plugins";
 

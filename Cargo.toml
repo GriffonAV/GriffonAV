@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "cli", "daemon", "shared/plugin_rules", "plugins/plugin_test", "plugins/plugin_test_2", "plugin_manager/runner", "plugin_manager/plugin_manager"
-, "shared/ipc_protocol", "shared/seshat"] #"gui/src-tauri" as been remove for test and work
+, "shared/ipc_protocol", "shared/thoth"] #"gui/src-tauri" as been remove for test and work
 resolver = "2"
 
 [workspace.dependencies]
