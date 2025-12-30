@@ -191,7 +191,7 @@ fn run() -> RResult<GlobalReport, RString> {
 
     match run_modules(&ctx, &modules) {
         Ok(report) => {
-            print_cache_report(&report);
+            // print_cache_report(&report);
             RResult::ROk(report)
         }
         Err(e) => RResult::RErr(RString::from(format!(
@@ -223,16 +223,20 @@ pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
 
 #[sabi_extern_fn]
 extern "C" fn handle_message(msg: RString) -> RString {
-    print!("[LIBCLEAN](msg) Received message: {}", msg.as_str());
+    println!("[LIBCLEAN](msg) Received message: {}", msg.as_str());
 
-    let res = match msg.as_str() {
-        "fn:run" => {
-            let res = run();
-            RString::from(format!("ACK_Cleaner {}\n", msg.as_str()))
-        }
+    match msg.as_str() {
+        "fn:run" => match run() {
+            RResult::ROk(report) => {
+                match serde_json::to_string(&report) {
+                    Ok(json) => RString::from(json),
+                    Err(e) => RString::from(format!("ERR json serialize: {e}")),
+                }
+            }
+            RResult::RErr(err) => RString::from(format!("ERR cleaner: {}", err)),
+        },
         _ => RString::from(format!("ACK LIBCLEAN {}\n", msg.as_str())),
-    };
-    res
+    }
 }
 
 
