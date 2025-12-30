@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Copy, Minus, Square, X } from "lucide-react";
+import { Copy, Minus, Square, X, Github} from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { SearchInput } from "./search";
 
@@ -53,18 +53,29 @@ function TitleBar() {
   }, [isTauri]);
 
   return (
-    <div className="px-4 py-3 flex items-center" data-tauri-drag-region>
-      <img
+    <div className="px-4 py-3 flex items-center  rounded-b-none" data-tauri-drag-region>
+      {/* <img
         src="/assets/logo.png"
         alt="Griffon Logo"
         style={{
           imageRendering: "pixelated",
         }}
         className="w-14 h-auto"
-      />
-      <div className="font-bold">Griffon</div>
+      /> */}
+      <div className="pl-6 font-bold">Griffon</div>
       <div className="flex-1"></div>
       <SearchInput></SearchInput>
+      {/* link to github */}
+      <a href="https://github.com/GriffonAV/GriffonAV" target="_blank" rel="noopener noreferrer">
+        <Button
+              className="cursor-pointer text-muted-foreground"
+              variant={"ghost"}
+              >
+            <Github />
+            {/* // stars number secondary text */}
+            4
+        </Button>
+      </a>
       {isTauri && (
         <>
           <Button

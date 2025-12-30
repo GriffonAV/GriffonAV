@@ -9,6 +9,9 @@ build-cli:
 build-daemon:
     cargo build -p daemon
 
+setup-gui:
+    cd gui && npm install
+
 build-gui:
     cd gui && npm run build
 

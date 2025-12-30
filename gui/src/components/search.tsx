@@ -30,12 +30,13 @@ function SearchInput() {
     return (
         <div>
             <Button
-                variant="outline"
-                className="mx-4"
+                variant="ghost"
+                className="mx-4 bg-accent/50 hover:bg-accent/70"
                 onClick={() => setOpen((open) => !open)}
             >
-                <SearchCode />
-                search
+               
+                Search Anything...
+                 <SearchCode className="text-muted-foreground ms-3"/>
             </Button>
             <CommandDialog open={open} onOpenChange={setOpen}>
                 <CommandInput placeholder="Type a command or search..." />
