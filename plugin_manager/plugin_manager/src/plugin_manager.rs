@@ -36,15 +36,35 @@ pub enum LogLevel {
 
 pub struct PluginManager {
     pub plugins_dir: PathBuf,
+    runner_binary: PathBuf,
     plugins_list: Vec<RunningPlugin>,
     pub log_level: LogLevel,
     next_request_id: u32,
 }
 
+const RUNNER_ENV: &str = "GRIFFON_RUNNER_BINARY";
+
+fn resolve_runner_binary() -> Result<PathBuf, String> {
+    if let Ok(p) = std::env::var(RUNNER_ENV) {
+        return Ok(PathBuf::from(p));
+    }
+
+    let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
+    let exe_dir = exe.parent().ok_or("exe has no parent")?;
+
+    let profile = if cfg!(debug_assertions) { "debug" } else { "release" };
+    let candidate = exe_dir.join("../..").join("target").join(profile).join("runner");
+
+    if candidate.exists() { Ok(candidate) }
+    else { Err(format!("runner not found at {:?}", candidate)) }
+}
+
 impl PluginManager {
     pub fn new<P: AsRef<Path>>(dir: P, log_level: LogLevel) -> Self {
+        let runner_binary = resolve_runner_binary().expect("runner binary not found");
         Self {
             plugins_dir: dir.as_ref().to_path_buf(),
+            runner_binary,
             plugins_list: Vec::new(),
             log_level,
             next_request_id: 0,
@@ -79,6 +99,11 @@ impl PluginManager {
 
     pub fn scan_dir(&mut self) {
         let mut current_paths = Vec::new();
+        use std::env;
+
+        println!("[debug] cwd = {:?}", env::current_dir().unwrap());
+        println!("[debug] plugins_dir = {:?}", self.plugins_dir);
+        println!("[debug] plugins_dir exists = {}", self.plugins_dir.exists());
 
         for entry in read_dir(&self.plugins_dir).expect("Bad plugin directory") {
             let path = entry.unwrap().path();
@@ -220,7 +245,7 @@ impl PluginManager {
         )
         .map_err(|e| format!("socketpair failed: {e}"))?;
 
-        let mut cmd = Command::new(RUNNER_BINARY);
+        let mut cmd = Command::new(&self.runner_binary);
         cmd.arg(path);
 
         unsafe {
