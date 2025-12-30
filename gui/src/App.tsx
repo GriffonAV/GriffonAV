@@ -1,36 +1,29 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { TitleBar } from "./components/title-bar";
+import { TitleBar } from "@/components/title-bar";
+import { Sidebar } from "@/components/sidebar";
+import { Outlet, Routes, Route } from "react-router-dom";
 
-function App() {
+import HomePage from "@/pages/home/HomePage";
+import PluginPage from "@/pages/plugins/PluginPage";
+import SettingsPage from "@/pages/settings/SettingsPage";
+
+export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="flex h-screen flex-col">
         <TitleBar />
-        <div className="flex-1 flex flex-row">
-          <div className="flex flex-col w-48">
-            <div className="mt-6"></div>
+        <div className="flex flex-1">
+          <Sidebar />
 
-            <div className="mt-2 flex bg-sidebar-accent rounded-none h-10 items-center">
-              <div className="bg-red-500 w-2 h-full mr-6"></div>
-              <span>extensions</span>
-            </div>
-            <div className="mt-2 flex h-8 items-center">
-              <div className="w-2 h-full mr-6"></div>
-              <span>extensions</span>
-            </div>
-            <div className="mt-2 flex h-10 items-center">
-              <div className="w-2 h-full mr-6"></div>
-              <span>extensions</span>
-            </div>
-          </div>
-          <div className="flex h-full w-full bg-secondary text-secondary-foreground p-4 radius-0">
-            content
+          <div className="flex-1 border-l p-4">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/plugin/:pid" element={<PluginPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
           </div>
         </div>
-        {/* <ModeToggle /> */}
       </div>
     </ThemeProvider>
   );
 }
-
-export default App;
