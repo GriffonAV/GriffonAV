@@ -48,10 +48,15 @@ fn message_plugin(pid: u32, msg: String, pm: State<PMState>) {
     let args = Vec::new(); // TODO: Handle param
     let call_payload = ipc_protocol::ipc_payload::CallPayload { fn_name : msg , args };
     match pm.0.lock().unwrap().send_call(pid, call_payload) {
-        Ok(req_id) => println!("[GUI] CALL sent (request_id={req_id})"),
+        Ok(req_id) => {
+            println!("[GUI] CALL sent (request_id={req_id})");
+            match pm.0.lock().unwrap().wait_for_response(req_id) {
+                Ok(ev) => println!("[GUI] RESPONSE: {:?}", ev),
+                Err(e) => eprintln!("[GUI](ERROR) wait_for_response failed: {e}"),
+            }
+        },
         Err(e) => println!("[GUI](ERROR) Failed to send CALL: {e}"),
     };
-    // pm.0.lock().unwrap().send_msg(pid, &msg);
 }
 
 fn main() {
