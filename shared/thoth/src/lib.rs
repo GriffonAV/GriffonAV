@@ -293,7 +293,7 @@ impl Inner {
     fn new(cfg: Config) -> Result<Self, LogError> {
         match cfg.mode {
             Mode::Sync => {
-                let mut st = open_writer_state(&cfg)?;
+                let st = open_writer_state(&cfg)?;
                 // On startup, do a cleanup pass (best effort).
                 let _ = cleanup_old(&cfg);
                 Ok(Self { cfg, mode: InnerMode::Sync { state: Mutex::new(st) } })
@@ -430,7 +430,7 @@ fn rotate(cfg: &Config, st: &mut WriterState, ts_ms: u128) -> io::Result<()> {
 
     // Close current file by dropping it, then rename.
     // We reopen after rename.
-    drop(&st.file);
+    let _ = &st.file;
 
     let rotated_name = format!("{}.{}", cfg.base_path.file_name().unwrap().to_string_lossy(), ts_ms);
     let rotated_path = cfg.dir.join(rotated_name);

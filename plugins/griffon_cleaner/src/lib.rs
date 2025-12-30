@@ -17,8 +17,12 @@ use abi_stable::{
     sabi_extern_fn,
     std_types::{RResult, RString, RVec, Tuple2},
 };
-use interface::{PluginI, PluginRoot, PluginRoot_Ref};
+use plugin_rules::{PluginI, PluginRoot, PluginRoot_Ref};
+use thoth::{LoggerBuilder, set_default_logger, Level};
 
+use thoth::info;
+use thoth::warn;
+use thoth::error;
 pub type CleanerResult<T> = Result<T, CleanerError>;
 
 #[derive(thiserror::Error, Debug)]
@@ -218,6 +222,26 @@ pub extern "C" fn init() -> RResult<RVec<Tuple2<RString, RString>>, RString> {
         RString::from("run"),
     ));
 
+    // let logger = match thoth::LoggerBuilder::new("griffon")
+    //     .process_name("griffon_cleaner")
+    //     .min_level(Level::Info)
+    //     .also_console_stderr(true)
+    //     .build()
+    // {
+    //     Ok(l) => l,
+    //     Err(e) => return RResult::RErr(RString::from(format!("logger init failed: {e}"))),
+    // };
+    //
+    // if let Err(e) = thoth::set_default_logger(logger.clone()) {
+    //     return RResult::RErr(RString::from(format!("set_default_logger failed: {e}")));
+    // }
+    //
+    // info!("daemon started pid={}", std::process::id());
+    // warn!("cache miss key={}", "abc");
+    // error!("something failed code={}", 42);
+    //
+    // logger.flush();
+    // logger.shutdown();
     RResult::ROk(info)
 }
 
