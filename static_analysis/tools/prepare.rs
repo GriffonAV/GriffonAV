@@ -8,7 +8,7 @@
 // cargo run --bin prepare -- --rules-repo https://github.com/Yara-Rules/rules --samples 200 --hit-rate 0.1 --fetch-eicar
 
 //RUST_LOG=debug
-use log::{debug};
+use log::debug;
 
 use std::env;
 use std::path::{Path, PathBuf};
@@ -16,12 +16,11 @@ use std::process::Command;
 
 use anyhow::{Context, Result};
 
-use std::fs;
-use rand::Rng;
 use rand::seq::SliceRandom;
+use rand::Rng;
 use regex::Regex;
+use std::fs;
 use std::io::Write;
-
 
 fn main() -> Result<()> {
     env_logger::init();
@@ -30,7 +29,8 @@ fn main() -> Result<()> {
     debug!("Args: {:?}", args);
 
     let force = arg_value(&args, "--force");
-    let rules_repo = arg_value(&args, "--rules-repo").unwrap_or_else(|| "https://github.com/Yara-Rules/rules".to_string());
+    let rules_repo = arg_value(&args, "--rules-repo")
+        .unwrap_or_else(|| "https://github.com/Yara-Rules/rules".to_string());
     let rules_dir = arg_value(&args, "--rules-dir").unwrap_or_else(|| "rules".to_string());
     let samples_dir = arg_value(&args, "--samples-dir").unwrap_or_else(|| "samples".to_string());
     let samples_count: usize = arg_value(&args, "--samples")
@@ -41,7 +41,10 @@ fn main() -> Result<()> {
         .unwrap_or(0.10);
     let fetch_eicar = args.iter().any(|a| a == "--fetch-eicar");
 
-    debug!("Prepare: rules_dir='{}', samples_dir='{}', samples_count={}, hit_rate={}", rules_dir, samples_dir, samples_count, hit_rate);
+    debug!(
+        "Prepare: rules_dir='{}', samples_dir='{}', samples_count={}, hit_rate={}",
+        rules_dir, samples_dir, samples_count, hit_rate
+    );
 
     ensure_git_available()?;
     if force.is_some() {
@@ -52,12 +55,15 @@ fn main() -> Result<()> {
     ensure_rules_cloned(&rules_repo, &rules_dir)?;
 
     let patterns = extract_patterns_from_rules(&rules_dir)?;
-    debug!("Extracted {} pattern strings from rules (will use up to 200 unique).", patterns.len());
+    debug!(
+        "Extracted {} pattern strings from rules (will use up to 200 unique).",
+        patterns.len()
+    );
 
     generate_samples(&samples_dir, &patterns, samples_count, hit_rate)?;
-    // if fetch_eicar {
-    //     download_eicar(&samples_dir)?;
-    // }
+    if fetch_eicar {
+        download_eicar_files()?;
+    }
 
     debug!(
         "Preparation done. rules OK ({}/), samples OK ({}/){}",
@@ -67,7 +73,6 @@ fn main() -> Result<()> {
     );
     Ok(())
 }
-
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.windows(2).find_map(|w| {
@@ -82,14 +87,19 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn ensure_git_available() -> Result<()> {
     match Command::new("git").arg("--version").output() {
         Ok(o) if o.status.success() => Ok(()),
-        _ => Err(anyhow::anyhow!("`git` not found in PATH. Please install git to allow cloning rules.")),
+        _ => Err(anyhow::anyhow!(
+            "`git` not found in PATH. Please install git to allow cloning rules."
+        )),
     }
 }
 
 fn ensure_rules_cloned(repo: &str, dir: &str) -> Result<()> {
     let p = Path::new(dir);
     if p.exists() && p.read_dir()?.next().is_some() {
-        debug!("Rules directory '{}' already exists and is not empty — skipping clone.", dir);
+        debug!(
+            "Rules directory '{}' already exists and is not empty — skipping clone.",
+            dir
+        );
         return Ok(());
     }
 
@@ -141,7 +151,7 @@ fn walk_files(dir: &str) -> Result<Vec<PathBuf>> {
         return Ok(out);
     }
 
-    fn recur(p: &Path, out: &mut Vec<PathBuf>) -> Result<()>  {
+    fn recur(p: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
         for ent in fs::read_dir(p)? {
             let ent = ent?;
             let path = ent.path();
@@ -157,7 +167,12 @@ fn walk_files(dir: &str) -> Result<Vec<PathBuf>> {
     Ok(out)
 }
 
-fn generate_samples(samples_dir: &str, patterns: &[String], count: usize, hit_rate: f64) -> Result<()> {
+fn generate_samples(
+    samples_dir: &str,
+    patterns: &[String],
+    count: usize,
+    hit_rate: f64,
+) -> Result<()> {
     fs::create_dir_all(samples_dir)?;
 
     let mut rng = rand::rng();
@@ -174,7 +189,12 @@ fn generate_samples(samples_dir: &str, patterns: &[String], count: usize, hit_ra
         }
     }
 
-    debug!("Generated {} samples in '{}'. (approx {} hits)", count, samples_dir, (count as f64 * hit_rate).round());
+    debug!(
+        "Generated {} samples in '{}'. (approx {} hits)",
+        count,
+        samples_dir,
+        (count as f64 * hit_rate).round()
+    );
     Ok(())
 }
 
@@ -201,5 +221,34 @@ fn random_begnim_file(file: &mut fs::File, size: usize) -> Result<()> {
     let mut buffer = vec![0u8; size];
     rng.fill(&mut buffer[..]);
     file.write_all(&buffer)?;
+    Ok(())
+}
+
+fn download_eicar_files() -> Result<()> {
+    let eicar_urls = [
+        "https://secure.eicar.org/eicar.com",
+        "https://secure.eicar.org/eicar.com.txt",
+        "https://secure.eicar.org/eicar_com.zip",
+        "https://secure.eicar.org/eicar_com2.zip",
+    ];
+
+    let eicar_dir = Path::new("eicar_files");
+    fs::create_dir_all(eicar_dir)?;
+
+    let client = reqwest::blocking::Client::new();
+
+    for url in eicar_urls {
+        let filename = url.split('/').last().expect("URL should have a filename");
+
+        let dest_path = eicar_dir.join(filename);
+
+        println!("Downloading {} -> {:?}", url, dest_path);
+
+        let mut response = client.get(url).send()?.error_for_status()?;
+        let mut file = fs::File::create(dest_path)?;
+
+        response.copy_to(&mut file)?;
+    }
+
     Ok(())
 }
