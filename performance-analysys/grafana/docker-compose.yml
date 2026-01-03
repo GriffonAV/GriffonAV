@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./data:/data
+      - ./provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_INSTALL_PLUGINS=frser-sqlite-datasource
+    restart: unless-stopped
+
+volumes:
+  grafana-data:
