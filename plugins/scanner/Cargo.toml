@@ -1,19 +1,17 @@
 [package]
-name = "static_analysis"
+name = "scanner"
 version = "0.1.0"
 edition = "2024"
 
-default-run = "static_analysis"
+default-run = "scanner"
 
 [[bin]]
 name = "prepare"
 path = "tools/prepare.rs"
 
 [[bin]]
-name = "static_analysis"
+name = "scanner"
 path = "src/main.rs"
-
-
 
 [dependencies]
 anyhow = "1.0.100"
