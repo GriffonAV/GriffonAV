@@ -1,6 +1,9 @@
+// ! important todo : split rules when multiple rules in one file, assign to multiple buckets
+
 use std::collections::HashMap;
 
-use file_context::{FileType, ScanStage};
+use crate::file_context::{FileType, ScanStage};
+use yara_x::Rules;
 
 #[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct RuleKey {

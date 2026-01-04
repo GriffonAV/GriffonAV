@@ -2,7 +2,7 @@ use std::fs;
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FileType {
     Executable(ExecutableType),
     Script(ScriptType),
@@ -12,18 +12,18 @@ pub enum FileType {
     Unknown,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ScanStage {
     Pre,
     Post,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ExecutableType {
     Elf,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ScriptType {
     Shell,
     Python,
@@ -32,7 +32,7 @@ pub enum ScriptType {
     Other,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ArchiveType {
     Zip,
     Tar,
@@ -41,7 +41,7 @@ pub enum ArchiveType {
     Unknown,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Hash, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DocumentType {
     Pdf,
     Other,

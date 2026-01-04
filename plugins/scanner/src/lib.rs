@@ -3,8 +3,9 @@ use std::path::Path;
 use walkdir::WalkDir;
 use yara_x::{Compiler, Rules, Scanner};
 
+pub mod file_context;
 pub mod rules;
-pub use rules::{load_rule_index, Engine};
+// pub use rules::{load_rule_index, Engine};
 
 /// Recursively loads rules, suppressing individual errors to avoid console flooding.
 /// Also injects a synthetic rule for benchmarking.
