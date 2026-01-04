@@ -2,7 +2,7 @@ use scanner::{load_yara_rules, scan_file};
 use std::time::Instant;
 use walkdir::WalkDir;
 
-mod file_class;
+mod file_context;
 
 fn main() {
     println!("Loading rules...");
@@ -18,7 +18,7 @@ fn main() {
     for entry in WalkDir::new("samples").into_iter().filter_map(|e| e.ok()) {
         if entry.path().is_file() {
             // Optional: Skip hidden files or huge files if needed
-            file_class::get(entry.path());
+            file_context::get(entry.path());
             let hits = scan_file(&rules, entry.path());
             if hits > 0 {
                 println!("[ALERT] {:?} matched {} rules", entry.path(), hits);
