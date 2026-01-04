@@ -5,11 +5,9 @@ authors: rmabille
 tags: [tech]
 ---
 
-# Sorting Files
-
 > report n°003 | 2025‐11‐11
 
-## context
+### context
 
 This research was done when faced with the following question:  
 - Should we triage files depending on their types (file extension) to run specific yara rules on them ?
@@ -20,19 +18,19 @@ This question triggered two necessary research topics :
 
 <!-- truncate -->
 
-## quick answer
+### quick answer
 
 1. Yes there exist specific rules about specific files format as demonstrated by [this article describing a specific rule to detect certain pattern in a JPEG file](https://blog.didierstevens.com/2015/01/20/yara-rule-detecting-jpeg-exif-with-eval/)
 2. As to is it interesting to triage files by type, yes and no. While is in the best interest for performance not to run rules meant for PDF on JPEG files, we should not forget that the extension or the header of a file can be easily overwritten in memory, so hiding a payload in a file by adding .xxx at the end of it to make it inconspicuous is a possibility.
 
-## Targeted response
+### Targeted response
 
 Now that we know that triage can be useful we need to determine in which case it really is. For that we need to differentiate between how malware operate, the category I want to expose is as I like to call them the "Weaponized documents".
 
 Those type of malware are tempered documents such as PDF made to exploit a flaw in a specific software that reads those documents. As such they want to be opened as they are by the user, so transforming its type to hide itself wouldn't be effective.
 
 
-## The advantages of doing a triage
+### The advantages of doing a triage
 
 ### Different file types require different parsing logic
 

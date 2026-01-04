@@ -2,6 +2,7 @@
 sidebar_position: 3
 ---
 
+# How to write a report
 
 # Language
 All reports should be written in english.
