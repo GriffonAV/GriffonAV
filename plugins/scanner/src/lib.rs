@@ -1,3 +1,4 @@
+use log::{debug, error, info, log_enabled, Level};
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;

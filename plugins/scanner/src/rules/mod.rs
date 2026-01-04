@@ -1,3 +1,4 @@
+use log::{debug, error, info, log_enabled, Level};
 use std::collections::HashMap;
 
 use crate::file_context::{FileType, ScanStage};
@@ -7,6 +8,9 @@ use yara_x::Rules;
 pub struct RuleKey {
     pub file_type: FileType,
     pub stage: ScanStage,
+    //pub os: Option<OS>, // future expansion
+    //pub arch: Option<Arch>,
+    //pub scan_context: Option<ScanContext>,
 }
 
 #[derive(Debug)]
@@ -44,7 +48,136 @@ pub fn load_rule_index<P: AsRef<Path>>(dir: P) -> Result<RuleIndex> {
     let re_file_type = Regex::new(r#"file_type\s*=\s*\"([^\"]+)\""#).unwrap();
     let re_stage = Regex::new(r#"stage\s*=\s*\"([^\"]+)\""#).unwrap();
 
-    let mut index = RuleIndex::new();
+    debug!(
+        "Get all rules in {} and extract metadata...",
+        dir.as_ref().display()
+    );
 
+    for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+        if !path.is_file() {
+            continue;
+        }
+        if let Some(ext) = path.extension() {
+            if ext != "yar" && ext != "yara" {
+                continue;
+            }
+        } else {
+            continue;
+        }
+
+        // ! for now, only the file type and stage of the first rule in the file is considered
+        // ! also, those metadata are not always present, so we need to add new sorting metadata
+        let contents = fs::read_to_string(path)
+            .with_context(|| format!("reading rule file {}", path.display()))?;
+        let ft = if let Some(c) = re_file_type.captures(&contents) {
+            match &c[1].to_lowercase()[..] {
+                "elf" => FileType::Executable(file_context::ExecutableType::Elf),
+                "script" => FileType::Script(file_context::ScriptType::Other),
+                "archive" => FileType::Archive(file_context::ArchiveType::Unknown),
+                "generic" | "genericbinary" => FileType::GenericBinary,
+                other => {
+                    eprintln!(
+                        "Unrecognized file_type metadata '{}' in {} - assigning Generic",
+                        other,
+                        path.display()
+                    );
+                    FileType::GenericBinary
+                }
+            }
+        } else {
+            FileType::GenericBinary
+        };
+
+        let stage = if let Some(c) = re_stage.captures(&contents) {
+            match &c[1].to_lowercase()[..] {
+                "pre" => ScanStage::Pre,
+                "post" => ScanStage::Post,
+                other => {
+                    eprintln!(
+                        "Unrecognized stage '{}' in {} - defaulting to Pre",
+                        other,
+                        path.display()
+                    );
+                    ScanStage::Pre
+                }
+            }
+        } else {
+            ScanStage::Pre
+        };
+        let key = RuleKey {
+            file_type: ft,
+            stage: stage,
+        };
+        buckets.entry(key).or_insert_with(Vec::new).push(contents);
+    }
+
+    // Compile per bucket
+    let mut index = RuleIndex::new();
+    for (key, sources) in buckets {
+        let mut compiler = Compiler::new();
+        let mut added = 0usize;
+        for src in sources.iter() {
+            if compiler.add_source(src).is_ok() {
+                added += 1;
+            } else {
+                eprintln!("Failed to add source to compiler for bucket {:?}", key);
+            }
+        }
+        match compiler.build() {
+            Ok(rules) => {
+                println!("Compiled bucket {:?} with {} sources", key, added);
+                index.rules.insert(key, rules);
+            }
+            Err(e) => {
+                eprintln!("Compilation failed for bucket {:?}: {} - skipping", key, e);
+            }
+        }
+    }
     Ok(index)
 }
+
+pub struct EngineConfig {
+    pub rules_dir: Option<PathBuf>,
+}
+
+pub struct Engine {
+    pub rule_index: Arc<RuleIndex>,
+    pub config: EngineConfig,
+}
+
+impl Engine {
+    pub fn from_dir<P: AsRef<Path>>(dir: P) -> Result<Self> {
+        let idx = load_rule_index(dir.as_ref())?;
+        Ok(Self {
+            rule_index: Arc::new(idx),
+            config: EngineConfig {
+                rules_dir: Some(dir.as_ref().to_path_buf()),
+            },
+        })
+    }
+
+    pub fn select_rules(&self, ft: FileType, stage: ScanStage) -> Option<&Rules> {
+        self.rule_index.select_rules(ft, stage)
+    }
+}
+
+// /// Convenience wrapper that keeps old behavior: compile all rules into a single `Rules`.
+// pub fn load_yara_rules<P: AsRef<Path>>(dir: P) -> Rules {
+//     let mut compiler = Compiler::new();
+
+//     // Reuse existing logic: add all sources, ignoring failures
+//     for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+//         let path = entry.path();
+//         if path.is_file() {
+//             if let Some(ext) = path.extension() {
+//                 if ext == "yar" || ext == "yara" {
+//                     if let Ok(contents) = fs::read_to_string(path) {
+//                         let _ = compiler.add_source(contents.as_str());
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     compiler.build()
+// }
