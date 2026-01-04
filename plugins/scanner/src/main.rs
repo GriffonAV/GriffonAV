@@ -18,7 +18,13 @@ fn main() {
     for entry in WalkDir::new("samples").into_iter().filter_map(|e| e.ok()) {
         if entry.path().is_file() {
             // Optional: Skip hidden files or huge files if needed
-            file_context::get(entry.path());
+            if let Err(e) = file_context::get(entry.path()) {
+                eprintln!(
+                    "Failed to get file context for {}: {}",
+                    entry.path().display(),
+                    e
+                );
+            }
             let hits = scan_file(&rules, entry.path());
             if hits > 0 {
                 println!("[ALERT] {:?} matched {} rules", entry.path(), hits);

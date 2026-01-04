@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -66,15 +67,15 @@ static MAGIC_SIG: &[MagicSig] = &[
     },
 ];
 
-pub fn get(path: &Path) -> FileContext {
+pub fn get(path: &Path) -> io::Result<FileContext> {
     println!("Finding file class for: {}", path.display());
     if !path.exists() || !path.is_file() {
-        return FileContext {
+        return Ok(FileContext {
             path: path.to_path_buf(),
             detected_type: FileType::Unknown,
             extension: None,
             size: 0,
-        };
+        });
     }
 
     let metadata = fs::metadata(path)?;
@@ -86,20 +87,20 @@ pub fn get(path: &Path) -> FileContext {
     let mut buffer = [0; 16];
     let n = file.read(&mut buffer)?;
     if let Some(detected_type) = get_type(&buffer[..n]) {
-        return FileContext {
+        return Ok(FileContext {
             path: path.to_path_buf(),
             detected_type,
             extension,
             size,
-        };
+        });
     }
 
-    return FileContext {
+    Ok(FileContext {
         path: path.to_path_buf(),
         detected_type: FileType::Unknown,
         extension: None,
         size: size,
-    };
+    })
 }
 
 fn get_type(buf: &[u8]) -> Option<FileType> {
