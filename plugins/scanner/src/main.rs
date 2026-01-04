@@ -5,6 +5,8 @@ use walkdir::WalkDir;
 mod file_context;
 
 fn main() {
+    env_logger::init();
+
     println!("Loading rules...");
     let load_start = Instant::now();
     let rules = load_yara_rules("rules");
