@@ -3,7 +3,7 @@ use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum FileType {
+pub enum FileType {
     Executable(ExecutableType),
     Script(ScriptType),
     Archive(ArchiveType),
@@ -13,12 +13,18 @@ enum FileType {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum ExecutableType {
+pub enum ScanStage {
+    Pre,
+    Post,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ExecutableType {
     Elf,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum ScriptType {
+pub enum ScriptType {
     Shell,
     Python,
     Perl,
@@ -27,7 +33,7 @@ enum ScriptType {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum ArchiveType {
+pub enum ArchiveType {
     Zip,
     Tar,
     Gzip,
@@ -36,7 +42,7 @@ enum ArchiveType {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum DocumentType {
+pub enum DocumentType {
     Pdf,
     Other,
 }

@@ -1,7 +1,10 @@
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
-use yara_x::{Compiler, Scanner, Rules};
+use yara_x::{Compiler, Rules, Scanner};
+
+pub mod rules;
+pub use rules::{load_rule_index, Engine};
 
 /// Recursively loads rules, suppressing individual errors to avoid console flooding.
 /// Also injects a synthetic rule for benchmarking.
@@ -20,13 +23,15 @@ pub fn load_yara_rules<P: AsRef<Path>>(dir: P) -> Rules {
                 $a
         }
     "#;
-    compiler.add_source(benchmark_rule).expect("Failed to add internal benchmark rule");
+    compiler
+        .add_source(benchmark_rule)
+        .expect("Failed to add internal benchmark rule");
 
     // 2. Load rules from directory
     println!("Scanning directory for rules...");
     for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
-        
+
         if path.is_file() {
             if let Some(ext) = path.extension() {
                 // Strict extension check
@@ -40,18 +45,18 @@ pub fn load_yara_rules<P: AsRef<Path>>(dir: P) -> Rules {
                             } else {
                                 error_count += 1;
                             }
-                        },
+                        }
                         Err(_) => error_count += 1,
                     }
                 }
             }
         }
     }
-    
+
     println!("✅ Compilation complete.");
     println!("   -> Loaded files: {}", loaded_count);
     println!("   -> Skipped/Failed: {}", error_count);
-    
+
     compiler.build()
 }
 
