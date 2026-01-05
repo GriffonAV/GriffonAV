@@ -3,9 +3,33 @@ use std::time::Instant;
 use walkdir::WalkDir;
 
 mod file_context;
+mod rules_engine;
+use file_context::{FileType, ScanStage};
+use rules_engine::Engine;
 
 fn main() {
     env_logger::init();
+
+    // let engine = rEngine {
+    //     rule_index: std::sync::Arc::new(
+    //         rules_engine::load_rule_index("rules").expect("Failed to load rule index"),
+    //     ),
+    //     config: rules_engine::EngineConfig { rules_dir: None },
+    // };
+    // if engine.rule_index.rules.is_empty() {
+    //     return;
+    // }
+    let engine = Engine::from_dir("./rules");
+    if engine.is_err() {
+        eprintln!(
+            "Failed to initialize rules engine: {}",
+            engine.err().unwrap()
+        );
+        return;
+    }
+    let engine = engine.unwrap();
+    engine.select_rules(FileType::GenericBinary, ScanStage::Pre);
+    return;
 
     println!("Loading rules...");
     let load_start = Instant::now();
