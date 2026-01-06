@@ -6,6 +6,7 @@ mod file_context;
 mod rules_engine;
 use file_context::{FileType, ScanStage};
 use rules_engine::Engine;
+// use scanner_engine::MultiThreadScanner;
 
 fn main() {
     env_logger::init();

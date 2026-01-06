@@ -22,6 +22,7 @@ regex = "1.12.2"
 yara-x = { git = "https://github.com/VirusTotal/yara-x" }
 walkdir = "2"
 reqwest = { version = "0.12.28", features = ["blocking"] }
+zip = "7.0.0"
 
 [dev-dependencies]
 criterion = "0.5"

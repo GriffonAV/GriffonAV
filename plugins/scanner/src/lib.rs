@@ -1,4 +1,4 @@
-use log::{debug, error, info, log_enabled, Level};
+use log::{Level, debug, error, info, log_enabled};
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
@@ -6,6 +6,7 @@ use yara_x::{Compiler, Rules, Scanner};
 
 pub mod file_context;
 pub mod rules_engine;
+pub mod scanner_engine;
 // pub use rules::{load_rule_index, Engine};
 
 /// Recursively loads rules, suppressing individual errors to avoid console flooding.
