@@ -20,6 +20,7 @@ fn main() {
     // if engine.rule_index.rules.is_empty() {
     //     return;
     // }
+    println!("test");
     let engine = Engine::from_dir("./rules");
     if engine.is_err() {
         eprintln!(
