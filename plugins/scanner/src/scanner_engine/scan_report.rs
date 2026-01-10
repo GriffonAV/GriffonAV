@@ -1,5 +1,6 @@
 use super::scan_match::ScanMatch;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "status", rename_all = "lowercase")]
@@ -38,4 +39,38 @@ pub struct ScanReport {
     pub skipped_files: usize,
     pub scan_duration_secs: f64,
     pub results: Vec<ScanResult>,
+}
+
+impl ScanReport {
+    pub fn new(scan_path: String) -> Self {
+        Self {
+            timestamp: chrono::Utc::now(),
+            scan_path,
+            total_files: 0,
+            infected_files: 0,
+            clean_files: 0,
+            errors: 0,
+            skipped_files: 0,
+            scan_duration_secs: 0.0,
+            results: Vec::new(),
+        }
+    }
+}
+
+impl fmt::Display for ScanReport {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "Scan Report for {}", self.scan_path)?;
+        writeln!(f, "Timestamp: {}", self.timestamp)?;
+        writeln!(f, "Total Files Scanned: {}", self.total_files)?;
+        writeln!(f, "Infected Files: {}", self.infected_files)?;
+        writeln!(f, "Clean Files: {}", self.clean_files)?;
+        writeln!(f, "Errors: {}", self.errors)?;
+        writeln!(f, "Skipped Files: {}", self.skipped_files)?;
+        writeln!(f, "Scan Duration (secs): {:.2}", self.scan_duration_secs)?;
+        writeln!(f, "Detailed Results:")?;
+        for result in &self.results {
+            writeln!(f, "{:?}", result)?;
+        }
+        Ok(())
+    }
 }

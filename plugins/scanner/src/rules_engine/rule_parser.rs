@@ -1,4 +1,3 @@
-use super::rule_key::RuleKey;
 use crate::file_context::{self, FileType, ScanStage};
 use log::error;
 use regex::Regex;

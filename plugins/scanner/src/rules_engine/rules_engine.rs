@@ -7,23 +7,23 @@ use super::rule_index::RuleIndex;
 use super::rule_loader::RuleLoader;
 use crate::file_context::{FileType, ScanStage};
 
-pub struct EngineConfig {
+pub struct RulesEngineConfig {
     pub rules_dir: Option<PathBuf>,
 }
 
-pub struct Engine {
+pub struct RulesEngine {
     pub rule_index: Arc<RuleIndex>,
-    pub config: EngineConfig,
+    pub config: RulesEngineConfig,
 }
 
-impl Engine {
+impl RulesEngine {
     pub fn from_dir<P: AsRef<Path>>(dir: P) -> Result<Self> {
         let loader = RuleLoader::new();
         let idx = loader.load_from_directory(dir.as_ref())?;
 
         Ok(Self {
             rule_index: Arc::new(idx),
-            config: EngineConfig {
+            config: RulesEngineConfig {
                 rules_dir: Some(dir.as_ref().to_path_buf()),
             },
         })
