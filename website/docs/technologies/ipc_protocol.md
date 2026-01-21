@@ -217,7 +217,7 @@ The frame parser enforces:
 - correct `MAGIC`
 - correct `VERSION`
 - known `MsgType`
-- payload length <= `MAX_PAYLOAD`
+- payload length `<= MAX_PAYLOAD`
 
 Invalid data results in `io::ErrorKind::InvalidData`.
 
