@@ -1,56 +1,29 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { TitleBar } from "@/components/title-bar";
+import { Sidebar } from "@/components/sidebar";
+import { Outlet, Routes, Route } from "react-router-dom";
 
-function App() {
-    const [scanResult, setScanResult] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+import HomePage from "@/pages/home/HomePage";
+import PluginPage from "@/pages/plugins/PluginPage";
+import SettingsPage from "@/pages/settings/SettingsPage";
 
-    const handleScan = async () => {
-        setLoading(true);
-        setError(null);
-        setScanResult(null);
+export default function App() {
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="flex h-screen flex-col">
+        <TitleBar />
+        <div className="flex flex-1">
+          <Sidebar />
 
-        try {
-            const pathToScan = "/home/file.txt";
-
-            // Call Rust backend command via Tauri invoke
-            const result = await invoke<string>("scan_from_gui", {
-                path: pathToScan,
-            });
-
-            setScanResult(result);
-        } catch (err) {
-            setError(String(err));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex min-h-svh flex-col items-center justify-center p-4">
-            <img
-                src="/assets/logo.png"
-                alt="Griffon Logo"
-                style={{
-                    imageRendering: "pixelated",
-                }}
-                className="w-32 h-auto"
-            />
-
-            <Button onClick={handleScan} disabled={loading}>
-                {loading ? "Scanning..." : "Start Scan"}
-            </Button>
-
-            {scanResult && (
-                <p className="mt-4 text-green-600">Scan result: {scanResult}</p>
-            )}
-
-            {error && <p className="mt-4 text-red-600">Error: {error}</p>}
+          <div className="flex-1 border-l p-4">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/plugin/:pid" element={<PluginPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          </div>
         </div>
-    );
+      </div>
+    </ThemeProvider>
+  );
 }
-
-export default App;
